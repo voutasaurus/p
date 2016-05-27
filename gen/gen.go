@@ -6,76 +6,30 @@ import (
 	"math/big"
 )
 
-var alphabet = map[string]bool{
-	"a": true, "A": true,
-	"b": true, "B": true,
-	"c": true, "C": true,
-	"d": true, "D": true,
-	"e": true, "E": true,
-	"f": true, "F": true,
-	"g": true, "G": true,
-	"h": true, "H": true,
-	"i": true, "I": true,
-	"j": true, "J": true,
-	"k": true, "K": true,
-	"l": true, "L": true,
-	"m": true, "M": true,
-	"n": true, "N": true,
-	"o": true, "O": true,
-	"p": true, "P": true,
-	"q": true, "Q": true,
-	"r": true, "R": true,
-	"s": true, "S": true,
-	"t": true, "T": true,
-	"u": true, "U": true,
-	"v": true, "V": true,
-	"w": true, "W": true,
-	"x": true, "X": true,
-	"y": true, "Y": true,
-	"z": true, "Z": true,
-}
+var (
+	alphabet = []string{"a", "A", "b", "B", "c", "C", "d", "D", "e", "E", "f", "F", "g", "G", "h", "H", "i", "I", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "o", "O", "p", "P", "q", "Q", "r", "R", "s", "S", "t", "T", "u", "U", "v", "V", "w", "W", "x", "X", "y", "Y", "z", "Z"}
+	digit    = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
+	special  = []string{"~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=", "{", "}", "[", "]", "\\", "|", ":", ";", "\"", "'", ",", "<", ".", ">", "?", "/", "`"}
+)
 
-var digit = map[string]bool{
-	"0": true, "1": true, "2": true, "3": true, "4": true,
-	"5": true, "6": true, "7": true, "8": true, "9": true,
-}
-
-var special = map[string]bool{
-	"~": true, "!": true, "@": true, "#": true, "$": true, "%": true, "^": true, "&": true, "*": true, "(": true, ")": true,
-	"-": true, "_": true, "+": true, "=": true, "{": true, "}": true, "[": true, "]": true, "\\": true, "|": true, ":": true,
-	";": true, "\"": true, "'": true, ",": true, "<": true, ".": true, ">": true, "?": true, "/": true, "`": true,
-}
-
-var set = map[string]map[string]bool{
+var set = map[string][]string{
 	"alphabet": alphabet,
 	"digit":    digit,
 	"special":  special,
 	"word":     word,
-	"space":    map[string]bool{" ": true},
+	"space":    []string{" "},
 }
 
 var setName = func() map[string]string {
 	m := map[string]string{}
-	for i := 'A'; i < 'Z'; i++ {
-		m[string(i)] = "alphabet"
+	for _, s := range alphabet {
+		m[s] = "alphabet"
 	}
-	for i := 'a'; i < 'z'; i++ {
-		m[string(i)] = "alphabet"
+	for _, s := range digit {
+		m[s] = "digit"
 	}
-	for i := '0'; i < '9'; i++ {
-		m[string(i)] = "digit"
-	}
-	for i := '!'; i < '/'; i++ {
-		m[string(i)] = "special"
-	}
-	for i := ':'; i < '@'; i++ {
-		m[string(i)] = "special"
-	}
-	for i := '['; i < '`'; i++ {
-		m[string(i)] = "special"
-	}
-	for i := '{'; i < '~'; i++ {
-		m[string(i)] = "special"
+	for _, s := range special {
+		m[s] = "special"
 	}
 	m["word"] = "word"
 	m[" "] = "space"
@@ -110,25 +64,11 @@ func CharSets(s string) map[string]bool {
 
 // Gen generates a random string based on the Config
 func (c *Config) Gen() (string, error) {
-	valid := merge(c.CharSets)
+	var valid []string
+	for name := range c.CharSets {
+		valid = append(valid, set[name]...)
+	}
 	return randString(valid, c.Length)
-}
-
-func merge(ss map[string]bool) []string {
-	sets := make([]map[string]bool, len(ss))
-	var length int
-	for name := range ss {
-		s := set[name]
-		sets = append(sets, s)
-		length += len(s)
-	}
-	list := make([]string, 0, length)
-	for _, m := range sets {
-		for s := range m {
-			list = append(list, s)
-		}
-	}
-	return list
 }
 
 func randString(list []string, length int) (string, error) {
