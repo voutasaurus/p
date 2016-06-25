@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"bytes"
 	"crypto/rand"
 	"errors"
 	"math/big"
@@ -72,15 +73,15 @@ func (c *Config) Gen() (string, error) {
 }
 
 func randString(list []string, length int) (string, error) {
-	var ss string
+	b := bytes.NewBufferString("")
 	for i := 0; i < length; i++ {
 		s, err := randElem(list)
 		if err != nil {
 			return "", err
 		}
-		ss += s
+		b.WriteString(s)
 	}
-	return ss, nil
+	return b.String(), nil
 }
 
 func randElem(list []string) (string, error) {
