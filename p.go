@@ -17,10 +17,8 @@ var (
 func main() {
 	flag.Parse()
 
-	sets := map[string]bool{}
-	if *flagWord {
-		sets["word"] = true
-	} else {
+	sets := map[string]bool{"word": true}
+	if !*flagWord {
 		sets = gen.CharSets(*flagChar)
 	}
 
