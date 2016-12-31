@@ -18,7 +18,7 @@ var set = map[string][]string{
 	"digit":    digit,
 	"special":  special,
 	"word":     word,
-	"space":    []string{" "},
+	"space":    {" "},
 }
 
 var setName = func() map[string]string {
